@@ -3,6 +3,15 @@ import { Container } from "reactstrap";
 
 function IndexHeader() {
   const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [joinButton, setJoinButton] = useState(null);
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) {
+      setJoinButton(1);
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,21 +48,19 @@ function IndexHeader() {
             </button>
             <div className="collapse navbar-collapse" id="navbarCollapse">
               <div className="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" className="nav-item nav-link active">Home</a>
-                <a href="about.html" className="nav-item nav-link">About</a>
-                <a href="courses.html" className="nav-item nav-link">Courses</a>
-                <div className="nav-item dropdown">
-                  <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                  <div className="dropdown-menu fade-down m-0">
-                    <a href="team.html" className="dropdown-item">Our Team</a>
-                    <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                    <a href="404.html" className="dropdown-item">404 Page</a>
-                  </div>
-                </div>
-                <a href="contact.html" className="nav-item nav-link">Contact</a>
+                <a href="/index" className="nav-item nav-link active">Home</a>
+                <a href="/about" className="nav-item nav-link">About</a>
+                <a href="/course" className="nav-item nav-link">Courses</a>
+                <a href="/contact" className="nav-item nav-link">Contact</a>
               </div>
+
               <button className="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
-                Join Now<i className="fa fa-arrow-right ms-3"></i>
+                {/* Render join button based on state */}
+                {joinButton ? (
+                  <a style={{ color: "white" }} href="/dashboard">Dashboard<i className="fa fa-arrow-right ms-3"></i></a>
+                ) : (
+                  <a style={{ color: "white" }} href="/login">Join Now<i className="fa fa-arrow-right ms-3"></i></a>
+                )}
               </button>
             </div>
           </Container>
