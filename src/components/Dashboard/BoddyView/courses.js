@@ -3,6 +3,39 @@ import axios from "axios";
 
 function CourseView() {
   const [courses, setCourses] = useState([]);
+  const [userData, setUserData] = useState(null);
+
+
+  useEffect(() => {
+    // Fetch user data from the backend
+    const fetchUserData = async () => {
+      try {
+        // Get the token from localStorage
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.error("Access token not found");
+          return;
+        }
+
+        // Include the token in the request headers
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        console.log(courses)
+
+        // Fetch user data using the token
+        const response = await axios.get("http://localhost:8000/api/user/", config);
+        setUserData(response.data.profile.user_type);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -13,6 +46,7 @@ function CourseView() {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("test",response.data)
         setCourses(response.data);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -59,15 +93,21 @@ function CourseView() {
         </div>
         <div class="card">
           <div class="card-header">
-            <button className="btn btn-primary">
+            {userData != "teacher"?(<>
+            
+            </>):(<>
+              <button className="btn btn-primary">
               <a style={{color:'white'}} href="/create-course">Create course</a>
             </button>
+            </>)}
+            
           </div>
           <div class="card-body">
             <table id="example1" class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th>Title</th>
+                  <th>Image</th>
                   <th>Description</th>
                   <th>Duration</th>
                   <th>Actions</th>
@@ -77,12 +117,16 @@ function CourseView() {
                 {courses.map((course) => (
                   <tr key={course.id}>
                     <td>{course.title}</td>
+                    <td><img src={course.course_image} style={{height: 60, width:60}}/></td>
                     <td>{course.description}</td>
                     <td>{course.duration}</td>
                     <td>
-                      <button className="btn btn-danger mr-2" onClick={() => handleDelete(course.id)}>
+                    {userData != "teacher"?(<></>):(<>
+                    <button className="btn btn-danger mr-2" onClick={() => handleDelete(course.id)}>
                         Delete
                       </button>
+                    </>)}
+                      
                       <a href={`/course/${course.id}`} className="btn btn-primary">
                         View
                       </a>

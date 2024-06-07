@@ -45,6 +45,7 @@ function DashboardView() {
           <div className="container-fluid">
             <div className="row">
               {courses.map(course => (
+                <a href={`/course/${course.id}`}>
                 <div key={course.id} className="col-lg-3 col-6">
                   <div className="small-box bg-info">
                     <div className="inner">
@@ -57,6 +58,7 @@ function DashboardView() {
                     <a href="#" className="small-box-footer">More info <i className="fas fa-arrow-circle-right"></i></a>
                   </div>
                 </div>
+                </a>
               ))}
             </div>
           </div>

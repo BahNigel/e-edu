@@ -1,9 +1,15 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from 'react-router-dom';
 
 function DashboardNaveBarIndex() {
   const [userData, setUserData] = useState(null);
+  const location = useLocation();
+
+  // Check if the current URL contains "courses"
+  const containsCourses = location.pathname.includes('/courses');
+  const containsDashboard = location.pathname.includes('/dashboard');
 
   useEffect(() => {
     // Fetch user data from the backend
@@ -91,21 +97,60 @@ function DashboardNaveBarIndex() {
               data-accordion="false"
             >
               <li className="nav-item menu-open">
-                <a href="#" className="nav-link active">
+              {containsDashboard ? (
+                  <a href="/dashboard" className="nav-link active">
                   <i className="nav-icon fas fa-tachometer-alt"></i>
                   <p>
                     Dashboard
                     <i className="right fas fa-angle-left"></i>
                   </p>
                 </a>
+                ) : (
+                  <a href="/dashboard" className="nav-link">
+                  <i className="nav-icon fas fa-tachometer-alt"></i>
+                  <p>
+                    Dashboard
+                    <i className="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                )}
+                
               </li>
               <li className="nav-item">
-                <a href="/courses" className="nav-link">
+
+              <div>
+                {containsCourses ? (
+                  <a href="/courses" className="nav-link active">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Courses
                   </p>
+                  
                 </a>
+                ) : (
+                  <a href="/courses" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    Courses
+                  </p>
+                  
+                </a>
+                )}
+              </div>
+                
+              </li>
+              <li className="nav-item">
+
+              <div>
+                  <a href="/logout" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    Logout
+                  </p>
+                  
+                </a>
+              </div>
+                
               </li>
             </ul>
           </nav>

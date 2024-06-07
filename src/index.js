@@ -15,6 +15,8 @@ import CoursesDetailsPage from './components/Dashboard/Boddy/courseDetails';
 import TimetableFormPage from './components/Dashboard/Boddy/courseTimtable';
 import CreateCourseMatiria from './components/Dashboard/Boddy/createCourseM';
 import CoursesTimtableViewPage from './components/Dashboard/Boddy/viewCT';
+import CoursesVirtualClassPage from './components/Dashboard/Boddy/vertualClass';
+import CourseEvaluationsPage from './components/Dashboard/Boddy/evaluation';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -34,6 +36,10 @@ ReactDOM.render(
       <Route path="/course-materia/create/:courseId" element={<CreateCourseMatiria/>} />
       <Route path="/course/:courseId/timetable" element={<CoursesTimtableViewPage/>} />
       <Route path="/course-materia/:courseId/update/:materialsId" element={<CreateCourseMatiria />} />
+      <Route path="/courses/:courseId/virtual-classes" element={<CoursesVirtualClassPage />} />
+      <Route path="/courses/:courseId/virtual-classes/:virtualClassId" element={<CoursesVirtualClassPage />} />
+      <Route path="/courses/:courseId/evaluation-classes" element={<CourseEvaluationsPage />} />
+      <Route path="/courses/:courseId/evaluation-classes/:evaluationId" element={<CourseEvaluationsPage />} />
       <Route path="*" element={<Navigate to="/index" replace />} />
     </Routes>
   </BrowserRouter>,

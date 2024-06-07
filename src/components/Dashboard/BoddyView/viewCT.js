@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-const localizer = momentLocalizer(moment);
 
 const CourseTimetableView = () => {
   const { courseId } = useParams();
-  const [events, setEvents] = useState([]);
+  const [timetables, setTimetables] = useState([]);
 
   useEffect(() => {
     const fetchTimetable = async () => {
@@ -20,30 +16,31 @@ const CourseTimetableView = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
         const timetables = response.data;
+        console.log("Timetables fetched:", timetables);
 
-        const eventList = timetables.flatMap((timetable) => {
+        const formattedTimetables = timetables.map(timetable => {
           const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-          const eventsForWeek = daysOfWeek.flatMap((day, index) => {
-            const startTime = timetable[day].start;
-            const endTime = timetable[day].end;
+          const eventsForWeek = daysOfWeek.map(day => {
+            const startTime = timetable[day]?.start;
+            const endTime = timetable[day]?.end;
 
-            if (startTime && endTime) {
-              const startDate = moment().week(timetable.week_number).day(index + 1).hour(startTime.split(':')[0]).minute(startTime.split(':')[1]);
-              const endDate = moment().week(timetable.week_number).day(index + 1).hour(endTime.split(':')[0]).minute(endTime.split(':')[1]);
-
-              return [{
-                title: `Week ${timetable.week_number}`,
-                start: startDate.toDate(),
-                end: endDate.toDate(),
-              }];
-            }
-            return [];
+            return {
+              day,
+              startTime,
+              endTime,
+              weekNumber: timetable.week_number,
+            };
           });
-          return eventsForWeek;
+          return {
+            weekNumber: timetable.week_number,
+            events: eventsForWeek
+          };
         });
 
-        setEvents(eventList);
+        console.log("Formatted timetables:", formattedTimetables);
+        setTimetables(formattedTimetables);
       } catch (error) {
         console.error("There was an error fetching the timetable!", error);
       }
@@ -54,30 +51,46 @@ const CourseTimetableView = () => {
 
   return (
     <div className="content-wrapper">
-        <div className="content-header">
-          <div className="container-fluid">
-            <div className="row mb-2">
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-right">
-                  <li className="breadcrumb-item">
-                    <a href="#">Home</a>
-                  </li>
-                  <li className="breadcrumb-item active">Courses</li>
-                </ol>
-              </div>
+      <div className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li className="breadcrumb-item active">Courses</li>
+              </ol>
             </div>
           </div>
         </div>
-        <div style={{ margin: 30 }}>
-          <h1>Course Timetable</h1>
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500 }}
-          />
-        </div>
+      </div>
+      <div style={{ margin: 30 }}>
+        <h1>Course Timetable</h1>
+        {timetables.map(timetable => (
+          <div key={timetable.weekNumber}>
+            <h2>Week {timetable.weekNumber}</h2>
+            <table className="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {timetable.events.map((event, index) => (
+                  <tr key={index}>
+                    <td>{event.day.charAt(0).toUpperCase() + event.day.slice(1)}</td>
+                    <td>{event.startTime}</td>
+                    <td>{event.endTime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
